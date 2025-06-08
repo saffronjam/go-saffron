@@ -1,0 +1,4 @@
+github.com/google/uuid v1.6.0 h1:NIvaJDMOsjHA8n1jAhLSgzrAzy1Hgr+hNrb57e+94F0=
+github.com/google/uuid v1.6.0/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
+github.com/saffronjam/cimgui-go v1.0.12 h1:pye8zuzOCroSEE+aaPoBac+oTuXVKRdnc4ZZUUcX1XE=
+github.com/saffronjam/cimgui-go v1.0.12/go.mod h1:hM8UcXzS8se5i6bCGWXjN9Jrd22EBXaehjwzD/2B/KQ=
