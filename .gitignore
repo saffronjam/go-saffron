@@ -33,4 +33,4 @@ go.work.sum
 
 
 # My own
-dependencies/
+deps/

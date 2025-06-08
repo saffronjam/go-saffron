@@ -18,11 +18,11 @@ cd "$GIT_ROOT"
 
 # Create temporary working directory
 TMP_DIR="$(mktemp -d)"
-#cleanup() {
-#  echo "🧹 Cleaning up..."
-#  rm -rf "$TMP_DIR"
-#}
-#trap cleanup EXIT
+cleanup() {
+  echo "🧹 Cleaning up..."
+  rm -rf "$TMP_DIR"
+}
+trap cleanup EXIT
 
 echo "📁 Using temporary directory: $TMP_DIR"
 
@@ -43,7 +43,7 @@ mkdir build && cd build
 SFML_DIR="$TMP_DIR/SFML"
 
 echo "⚙️ Building SFML from source..."
-cmake .. -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF
+cmake .. -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON
 make -j"$(nproc)"
 sudo make install
 
@@ -64,29 +64,17 @@ make -j"$(nproc)"
 sudo make install
 
 # Copy result to dependencies structure
-CSFML_DEST_DIR="$REPO_DIR/dependencies/CSFML_2.6.1"
-SFML_DEST_DIR="$REPO_DIR/dependencies/SFML_2.6.1"
-mkdir -p "$CSFML_DEST_DIR/include"
-mkdir -p "$CSFML_DEST_DIR/lib"
-mkdir -p "$SFML_DEST_DIR/include"
-mkdir -p "$SFML_DEST_DIR/lib"
+DEPS_DIR="$REPO_DIR/deps"
+mkdir -p "$DEPS_DIR/include"
+mkdir -p "$DEPS_DIR/lib"
 
 # CSFML
-cp -r "$CSFML_DIR/include/SFML" "$CSFML_DEST_DIR/include/"
-cp -r "$CSFML_DIR/build/lib/"* "$CSFML_DEST_DIR/lib/"
+cp -r "$CSFML_DIR/include/SFML" "$DEPS_DIR/include/"
+cp -r "$CSFML_DIR/build/lib/"* "$DEPS_DIR/lib/"
 
 # SFML
-cp -r "$SFML_DIR/include/SFML" "$SFML_DEST_DIR/include/"
-cp -r "$SFML_DIR/build/lib/"* "$SFML_DEST_DIR/lib/"
-#cp /usr/local/lib/libsfml-*.so* "$SFML_DEST_DIR/lib/"
+cp -r "$SFML_DIR/build/lib/"* "$DEPS_DIR/lib/"
 
 echo ""
 echo "✅ SFML + CSFML built and installed"
-echo "📦 Files copied to ./dependencies/SFML_2.6.1 and ./dependencies/CSFML_2.6.1"
-echo ""
-echo "📌 Suggested environment setup:"
-echo "export CGO_CFLAGS=\"-I$REPO_DIR/dependencies/CSFML_2.6.1/include -I$REPO_DIR/dependencies/SFML_2.6.1/include\""
-echo "export CGO_LDFLAGS=\"-L$REPO_DIR/dependencies/CSFML_2.6.1/lib -L$REPO_DIR/dependencies/SFML_2.6.1/lib -lcsfml-graphics -lcsfml-window -lcsfml-system -lcsfml-network\""
-
-echo ""
-echo "(TMP_DIR: $TMP_DIR)"
+echo "📦 Files copied to ./deps/SFML_2.6.1 and ./deps/CSFML_2.6.1"
