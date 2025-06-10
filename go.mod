@@ -6,6 +6,6 @@ toolchain go1.24.3
 
 require github.com/google/uuid v1.6.0
 
-require github.com/saffronjam/go-sfml v0.0.10
+require github.com/saffronjam/go-sfml v0.0.14
 
-require github.com/saffronjam/cimgui-go v1.0.16
+require github.com/saffronjam/cimgui-go v1.0.17

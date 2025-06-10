@@ -2,32 +2,52 @@ package app
 
 import (
 	"github.com/saffronjam/cimgui-go/imgui"
+	"go-saffron/pkg/core"
 	"go-saffron/pkg/gui"
-	"go-saffron/pkg/sys"
-	"time"
+	"go-saffron/pkg/input"
+	"go-saffron/pkg/scene"
+	"log"
 )
 
+var MainApp *App
+
+func SetMainApp(app *App) {
+	MainApp = app
+}
+
 type Config struct {
-	WindowProps *sys.WindowProps
+	WindowProps *core.WindowProps
 }
 
 type App struct {
-	Config     *Config
-	EventStore *sys.EventStore
-	Window     *sys.Window
+	Config      *Config
+	EventStore  *core.EventStore
+	Window      *core.Window
+	Input       *input.Store
+	ClientScene *scene.Scene
+	Clock       *core.Clock
+}
+
+type Client interface {
+	Setup() error
+	Update() error
 }
 
 func NewApp(config *Config) (*App, error) {
-	eventStore := sys.NewEventStore()
-	window, err := sys.NewWindow(config.WindowProps)
+	eventStore := core.NewEventStore()
+	window, err := core.NewWindow(config.WindowProps)
 	if err != nil {
 		return nil, err
 	}
+
+	clock := core.NewClock()
+	core.SetGlobalClock(clock)
 
 	app := &App{
 		Config:     config,
 		EventStore: eventStore,
 		Window:     window,
+		Clock:      clock,
 	}
 
 	eventStore.RegisterProducer(window)
@@ -38,41 +58,44 @@ func NewApp(config *Config) (*App, error) {
 	}
 
 	eventStore.RegisterHandlerByTags(func(e any) {
-		gui.ProcessEvent(window, e.(sys.Event))
+		gui.ProcessEvent(window, e.(core.Event))
 	}, "sfml")
+
+	app.Input = input.NewInput(eventStore)
+	input.SetGlobalInput(app.Input)
 
 	return app, nil
 }
 
-func (a *App) Run() error {
-	a.EventStore.RegisterHandler(func(e any) { a.Window.Close() }, sys.EventClosed)
-	dt := time.Millisecond * 16 // Target ~60 FPS first iteration
-	for {
-		before := time.Now()
+func (app *App) Run(client Client) error {
+	app.EventStore.RegisterHandler(func(e any) { app.Window.Close() }, core.EventClosed)
 
-		a.EventStore.ProcessEvents()
-		if !a.Window.IsOpen() {
+	err := client.Setup()
+	if err != nil {
+		log.Fatalln("Failed to setup client:", err)
+	}
+
+	for {
+		app.Clock.Tick()
+		app.EventStore.ProcessEvents()
+		if !app.Window.IsOpen() {
 			println("Exiting application")
 			break
 		}
 
-		gui.Update(a.Window, dt)
+		app.Window.Clear()
+		gui.Update(app.Window)
+		imgui.PushFont(gui.Fonts["roboto"])
+		err = client.Update()
+		if err != nil {
+			log.Fatalln("Failed to update client:", err)
+		}
+		app.Input.PostUpdate()
 
-		gui.BeginDockSpace()
-		imgui.ShowDemoWindow()
+		imgui.PopFont()
+		gui.Render(app.Window)
+		app.Window.Display()
 
-		imgui.Begin("something")
-		imgui.Button("a pretty button")
-		imgui.End()
-
-		gui.EndDockSpace()
-
-		a.Window.Clear()
-		gui.Render(a.Window)
-		a.Window.Display()
-
-		after := time.Now()
-		dt = after.Sub(before)
 	}
 
 	return nil

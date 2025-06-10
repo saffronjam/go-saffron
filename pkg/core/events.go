@@ -1,4 +1,4 @@
-package sys
+package core
 
 import "github.com/saffronjam/go-sfml/public/sfml"
 

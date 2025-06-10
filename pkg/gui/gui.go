@@ -3,8 +3,7 @@ package gui
 import (
 	"github.com/saffronjam/cimgui-go/backend/sfml_backend"
 	"github.com/saffronjam/cimgui-go/imgui"
-	"go-saffron/pkg/sys"
-	"time"
+	"go-saffron/pkg/core"
 	"unsafe"
 )
 
@@ -12,7 +11,7 @@ var (
 	backend *sfml_backend.SfmlBackend
 )
 
-func Init(window *sys.Window, loadDefaultFont bool) error {
+func Init(window *core.Window, loadDefaultFont bool) error {
 	backend = sfml_backend.NewSfmlBackend()
 
 	if err := backend.Init(unsafe.Pointer(window.SfmlHandle().ToC()), loadDefaultFont); err != nil {
@@ -23,19 +22,27 @@ func Init(window *sys.Window, loadDefaultFont bool) error {
 	currentConfigFlags |= imgui.ConfigFlagsDockingEnable
 	imgui.CurrentIO().SetConfigFlags(currentConfigFlags)
 
+	LoadFont("roboto", "assets/fonts/Roboto-Regular.ttf", 16)
+
+	err := backend.UpdateFontTexture()
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
-func ProcessEvent(window *sys.Window, event sys.Event) {
+func ProcessEvent(window *core.Window, event core.Event) {
 	cEvent := event.SfmlHandle().BaseToC()
 	backend.ProcessEvent(unsafe.Pointer(window.SfmlHandle().ToC()), unsafe.Pointer(&cEvent))
 }
 
-func Update(window *sys.Window, dt time.Duration) {
+func Update(window *core.Window) {
+	dt := core.GlobalClock.DeltaDuration()
 	backend.NewFrame(unsafe.Pointer(window.SfmlHandle().ToC()), dt)
 }
 
-func Render(window *sys.Window) {
+func Render(window *core.Window) {
 	backend.Render(unsafe.Pointer(window.SfmlHandle().ToC()))
 }
 
@@ -51,8 +58,8 @@ func BeginDockSpace() {
 	imgui.PushStyleVarFloat(imgui.StyleVarWindowBorderSize, 0.0)
 	imgui.PushStyleVarVec2(imgui.StyleVarWindowPadding, imgui.Vec2{X: 0.0, Y: 0.0})
 	imgui.BeginV("DockSpaceViewport", nil, hostWindowFlags)
-	dockspaceId := imgui.IDStr("DockSpace")
-	imgui.DockSpaceV(dockspaceId, imgui.Vec2{X: 0.0, Y: 0.0}, imgui.DockNodeFlagsNone, imgui.NewEmptyWindowClass())
+	dockerSpaceId := imgui.IDStr("DockSpace")
+	imgui.DockSpaceV(dockerSpaceId, imgui.Vec2{X: 0.0, Y: 0.0}, imgui.DockNodeFlagsNone, imgui.NewEmptyWindowClass())
 }
 
 func EndDockSpace() {
