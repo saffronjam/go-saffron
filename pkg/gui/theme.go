@@ -1,15 +1,44 @@
 package gui
 
-import "github.com/saffronjam/cimgui-go/imgui"
+import (
+	"fmt"
+	"github.com/saffronjam/cimgui-go/imgui"
+	"os"
+)
 
-var Fonts = make(map[string]*imgui.Font)
+var Fonts = make(map[Font]*imgui.Font)
+
+type Font struct {
+	Name string
+	Size float32
+}
 
 func LoadFont(fontName string, filename string, fontSize float32) {
+	_, err := os.Stat(filename)
+	if os.IsNotExist(err) {
+		panic("Font file does not exist: " + filename)
+	}
+
 	font := imgui.CurrentIO().Fonts().AddFontFromFileTTF(filename, fontSize)
 	if font == nil {
 		panic("Failed to load font: " + filename)
 	}
-	Fonts[fontName] = font
+	Fonts[Font{
+		Name: fontName,
+		Size: fontSize,
+	}] = font
+}
+
+func PushFont(name string, size float32) {
+	if f, ok := Fonts[Font{name, size}]; ok {
+		imgui.PushFont(f)
+	} else {
+		panic("Font not found: " + name + " at size " + fmt.Sprintf("%f", size))
+	}
+}
+
+func PopFont() {
+	imgui.PopFont()
 }
 
 func SetBessDarkColors() {

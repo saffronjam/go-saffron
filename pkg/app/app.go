@@ -1,7 +1,6 @@
 package app
 
 import (
-	"github.com/saffronjam/cimgui-go/imgui"
 	"go-saffron/pkg/core"
 	"go-saffron/pkg/gui"
 	"go-saffron/pkg/input"
@@ -85,14 +84,14 @@ func (app *App) Run(client Client) error {
 
 		app.Window.Clear()
 		gui.Update(app.Window)
-		imgui.PushFont(gui.Fonts["roboto"])
+		gui.PushFont("roboto", 18)
 		err = client.Update()
 		if err != nil {
 			log.Fatalln("Failed to update client:", err)
 		}
 		app.Input.PostUpdate()
 
-		imgui.PopFont()
+		gui.PopFont()
 		gui.Render(app.Window)
 		app.Window.Display()
 

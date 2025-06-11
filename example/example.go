@@ -7,6 +7,7 @@ import (
 	"go-saffron/pkg/gui"
 	"go-saffron/pkg/scene"
 	"math"
+	"math/rand"
 	"runtime"
 )
 
@@ -38,7 +39,9 @@ type SaffronClient struct {
 	Camera       *scene.Camera
 	ViewportPane *gui.ViewportPane
 
-	testCs *sfml.CircleShape
+	testCs        []*sfml.CircleShape
+	basePositions []*sfml.Vector2f
+	speed         []float32
 }
 
 func NewSaffronClient() *SaffronClient {
@@ -51,19 +54,33 @@ func NewSaffronClient() *SaffronClient {
 		camera.SetViewportSize(size)
 	})
 
+	n := 100
+	circleShapes := make([]*sfml.CircleShape, n*n)
+	basePositions := make([]*sfml.Vector2f, n*n)
+	speed := make([]float32, n*n)
+	for i := 0; i < n; i++ {
+		for j := 0; j < n; j++ {
+			circleShapes[i*n+j] = sfml.NewCircleShape()
+			circleShapes[i*n+j].SetRadius(10)
+			circleShapes[i*n+j].SetFillColor(sfml.Color{R: 255, G: 0, B: 0, A: 255})
+			basePositions[i*n+j] = &sfml.Vector2f{X: float32(i * 20), Y: float32(j * 20)}
+			speed[i*n+j] = rand.Float32() * 2 // Random speed for each circle
+		}
+	}
+
 	return &SaffronClient{
-		RenderTarget: target,
-		Scene:        scene.NewScene(target, camera),
-		Camera:       camera,
-		ViewportPane: viewportPane,
-		testCs:       sfml.NewCircleShape(),
+		RenderTarget:  target,
+		Scene:         scene.NewScene(target, camera),
+		Camera:        camera,
+		ViewportPane:  viewportPane,
+		testCs:        circleShapes,
+		basePositions: basePositions,
+		speed:         speed,
 	}
 }
 
 func (c *SaffronClient) Setup() error {
-
 	gui.SetBessDarkColors()
-	c.testCs.SetRadius(50)
 	return nil
 }
 
@@ -71,20 +88,24 @@ func (c *SaffronClient) Update() error {
 	gui.BeginDockSpace()
 	c.RenderTarget.Clear(sfml.Color{R: 0, G: 0, B: 0, A: 255})
 
-	c.Scene.SubmitCircleShape(c.testCs, nil)
-
+	sinceStart := core.GlobalClock.SinceStart()
+	for idx, cs := range c.testCs {
+		sinCosVec := sfml.Vector2f{
+			X: float32(math.Cos(float64(sinceStart)*2*math.Pi*float64(c.speed[idx]))) * 3,
+			Y: float32(math.Sin(float64(sinceStart)*2*math.Pi*float64(c.speed[idx]))) * 3,
+		}
+		cs.SetPosition(sfml.Vector2f{
+			X: c.basePositions[idx].X + sinCosVec.X,
+			Y: c.basePositions[idx].Y + sinCosVec.Y,
+		})
+	}
 	c.Camera.Update()
+
+	for _, cs := range c.testCs {
+		c.Scene.SubmitCircleShape(cs, nil)
+	}
 	c.Camera.RenderUI()
 	c.ViewportPane.RenderUI()
-
-	sinceStart := app.MainApp.Clock.SinceStart()
-	sinCosVec := sfml.Vector2f{
-		X: float32(math.Cos(float64(sinceStart)*2*math.Pi)) * 3,
-		Y: float32(math.Sin(float64(sinceStart)*2*math.Pi)) * 3,
-	}
-
-	c.testCs.SetPosition(sinCosVec)
-
 	c.RenderTarget.Display()
 	gui.EndDockSpace()
 	return nil
