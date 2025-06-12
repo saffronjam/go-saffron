@@ -1,11 +1,12 @@
 package app
 
 import (
+	"github.com/saffronjam/cimgui-go/imgui"
 	"go-saffron/pkg/core"
 	"go-saffron/pkg/gui"
 	"go-saffron/pkg/input"
+	"go-saffron/pkg/log"
 	"go-saffron/pkg/scene"
-	"log"
 )
 
 var MainApp *App
@@ -25,6 +26,7 @@ type App struct {
 	Input       *input.Store
 	ClientScene *scene.Scene
 	Clock       *core.Clock
+	MenuBar     *gui.MenuBar
 }
 
 type Client interface {
@@ -33,6 +35,11 @@ type Client interface {
 }
 
 func NewApp(config *Config) (*App, error) {
+	err := log.SetupLogger()
+	if err != nil {
+		return nil, err
+	}
+
 	eventStore := core.NewEventStore()
 	window, err := core.NewWindow(config.WindowProps)
 	if err != nil {
@@ -42,11 +49,19 @@ func NewApp(config *Config) (*App, error) {
 	clock := core.NewClock()
 	core.SetGlobalClock(clock)
 
+	menuBar := gui.NewMenuBar()
+	menuBar.AddMenu("File", func() {
+		if imgui.MenuItemBoolV("Fullscreen", "Alt+Enter", window.Fullscreen, true) {
+			window.SetFullscreen(!window.Fullscreen)
+		}
+	})
+
 	app := &App{
 		Config:     config,
 		EventStore: eventStore,
 		Window:     window,
 		Clock:      clock,
+		MenuBar:    menuBar,
 	}
 
 	eventStore.RegisterProducer(window)
@@ -69,6 +84,7 @@ func NewApp(config *Config) (*App, error) {
 func (app *App) Run(client Client) error {
 	app.EventStore.RegisterHandler(func(e any) { app.Window.Close() }, core.EventClosed)
 
+	gui.SetBessDarkColors()
 	err := client.Setup()
 	if err != nil {
 		log.Fatalln("Failed to setup client:", err)
@@ -98,4 +114,8 @@ func (app *App) Run(client Client) error {
 	}
 
 	return nil
+}
+
+func (app *App) RenderUI() {
+	app.MenuBar.RenderUI()
 }

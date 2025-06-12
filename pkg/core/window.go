@@ -6,26 +6,39 @@ import (
 
 type Window struct {
 	WindowProps
-	sfmlWindow *sfml.RenderWindow
+	sfmlWindow            *sfml.RenderWindow
+	preFullscreenPosition *sfml.Vector2i // Used to restore position after exiting fullscreen
 }
 
 type WindowProps struct {
 	Width, Height uint
+	Fullscreen    bool
+	Borderless    bool
 	Title         string
 	Antialiasing  uint
 	BitsPerPixel  uint
 }
 
-func DefaultProps() *WindowProps {
-	return &WindowProps{Width: 1600, Height: 900, Title: "Default Window", Antialiasing: 0, BitsPerPixel: 32}
+func FullscreenProps(title string) *WindowProps {
+	return &WindowProps{
+		Fullscreen:   true,
+		Title:        title,
+		Antialiasing: 0,
+		BitsPerPixel: 32,
+	}
 }
 
 func NewWindow(props *WindowProps) (*Window, error) {
+	windowFlags := sfml.DefaultStyle
+	if props.Fullscreen {
+		windowFlags |= sfml.Fullscreen
+	}
+
 	sfmlWindow := sfml.NewRenderWindow(sfml.VideoMode{
 		Width:        uint32(props.Width),
 		Height:       uint32(props.Height),
 		BitsPerPixel: uint32(props.BitsPerPixel),
-	}, props.Title, uint32(sfml.DefaultStyle), &sfml.ContextSettings{
+	}, props.Title, uint32(windowFlags), &sfml.ContextSettings{
 		AntialiasingLevel: uint32(props.Antialiasing),
 	})
 
@@ -74,6 +87,34 @@ func (w *Window) Position() (x, y int) {
 func (w *Window) Size() (width, height int) {
 	size := w.sfmlWindow.Size()
 	return int(size.X), int(size.Y)
+}
+
+func (w *Window) SetFullscreen(fullscreen bool) {
+	if fullscreen && !w.Fullscreen {
+		w.preFullscreenPosition = w.sfmlWindow.Position()
+		w.sfmlWindow.Free()
+		w.sfmlWindow = sfml.NewRenderWindow(sfml.VideoMode{
+			Width:        uint32(w.Width),
+			Height:       uint32(w.Height),
+			BitsPerPixel: uint32(w.BitsPerPixel),
+		}, w.Title, uint32(sfml.Fullscreen), &sfml.ContextSettings{
+			AntialiasingLevel: uint32(w.Antialiasing),
+		})
+	} else if !fullscreen && w.Fullscreen {
+		if w.preFullscreenPosition == nil {
+			w.preFullscreenPosition = &sfml.Vector2i{X: 0, Y: 0} // Default position if not set
+		}
+		w.sfmlWindow.Free()
+		w.sfmlWindow = sfml.NewRenderWindow(sfml.VideoMode{
+			Width:        uint32(w.Width),
+			Height:       uint32(w.Height),
+			BitsPerPixel: uint32(w.BitsPerPixel),
+		}, w.Title, uint32(sfml.DefaultStyle), &sfml.ContextSettings{
+			AntialiasingLevel: uint32(w.Antialiasing),
+		})
+		w.sfmlWindow.SetPosition(*w.preFullscreenPosition)
+	}
+	w.Fullscreen = fullscreen
 }
 
 func (w *Window) SfmlHandle() *sfml.RenderWindow {

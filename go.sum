@@ -4,3 +4,7 @@ github.com/saffronjam/cimgui-go v1.0.17 h1:/A/NfryE4hlRMeVYg7BXNhfzLAVCslxFlS4dJ
 github.com/saffronjam/cimgui-go v1.0.17/go.mod h1:hM8UcXzS8se5i6bCGWXjN9Jrd22EBXaehjwzD/2B/KQ=
 github.com/saffronjam/go-sfml v0.0.14 h1:+ldcbFVLmJMicU15BLYsRVaai0eLuha7pxGD8nhRd0E=
 github.com/saffronjam/go-sfml v0.0.14/go.mod h1:sNLrw7/W3R/m7kS1siitZpn/0gWKDzRrgnZugXYEd+E=
+go.uber.org/multierr v1.11.0 h1:blXXJkSxSSfBVBlC76pxqeO+LN3aDfLQo+309xJstO0=
+go.uber.org/multierr v1.11.0/go.mod h1:20+QtiLqy0Nd6FdQB9TLXag12DsQkrbs3htMFfDN80Y=
+go.uber.org/zap v1.27.0 h1:aJMhYGrd5QSmlpLMr2MftRKl7t8J8PTZPA732ud/XR8=
+go.uber.org/zap v1.27.0/go.mod h1:GB2qFLM7cTU87MWRP2mPIjqfIDnGu+VIO4V/SdhGo2E=
