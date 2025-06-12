@@ -2,12 +2,7 @@ package main
 
 import (
 	"github.com/saffronjam/cimgui-go/imgui"
-	"github.com/saffronjam/go-saffron/pkg/app"
-	"github.com/saffronjam/go-saffron/pkg/core"
-	"github.com/saffronjam/go-saffron/pkg/gui"
-	"github.com/saffronjam/go-saffron/pkg/input"
-	"github.com/saffronjam/go-saffron/pkg/log"
-	"github.com/saffronjam/go-saffron/pkg/scene"
+	"github.com/saffronjam/go-saffron/pkg/saffron"
 	"github.com/saffronjam/go-sfml/public/sfml"
 	"go.uber.org/zap/zapcore"
 	"runtime"
@@ -16,8 +11,8 @@ import (
 func init() { runtime.LockOSThread() }
 
 func main() {
-	saffronApp, err := app.NewApp(&app.Config{
-		WindowProps: &core.WindowProps{
+	saffronApp, err := saffron.NewApp(&saffron.Config{
+		WindowProps: &saffron.WindowProps{
 			Width:      1920 - 100,
 			Height:     1080 - 100,
 			Title:      "go-saffron Example",
@@ -28,7 +23,7 @@ func main() {
 		panic(err)
 	}
 
-	app.SetMainApp(saffronApp)
+	saffron.SetMainApp(saffronApp)
 
 	err = saffronApp.Run(NewSaffronClient())
 	if err != nil {
@@ -41,34 +36,34 @@ type Algorithm struct {
 }
 
 type SaffronClient struct {
-	App          *app.App
-	RenderTarget *core.ControllableRenderTexture
-	Scene        *scene.Scene
-	Camera       *scene.Camera
-	ViewportPane *gui.ViewportPane
-	Log          *gui.Log
+	App          *saffron.App
+	RenderTarget *saffron.ControllableRenderTexture
+	Scene        *saffron.Scene
+	Camera       *saffron.Camera
+	ViewportPane *saffron.ViewportPane
+	Log          *saffron.LogView
 	Algorithm    Algorithm
 }
 
 func NewSaffronClient() *SaffronClient {
-	target := core.NewControllableRenderTexture(1600, 900, false)
-	camera := scene.NewCamera()
-	viewportPane := gui.NewViewportPane("Viewport", target)
+	target := saffron.NewControllableRenderTexture(1600, 900, false)
+	camera := saffron.NewCamera()
+	viewportPane := saffron.NewViewportPane("Viewport", target)
 
 	viewportPane.Resized.Subscribe(func(size *sfml.Vector2f) {
 		target.Resize(int(size.X), int(size.Y))
 		camera.SetViewportSize(size)
 	})
 
-	guiLog := gui.NewLog()
-	log.OnLog.Subscribe(func(msg zapcore.Entry) {
+	guiLog := saffron.NewLog()
+	saffron.OnLog.Subscribe(func(msg zapcore.Entry) {
 		guiLog.AddEntry(msg)
 	})
 
 	return &SaffronClient{
-		App:          app.MainApp,
+		App:          saffron.MainApp,
 		RenderTarget: target,
-		Scene:        scene.NewScene(target, camera),
+		Scene:        saffron.NewScene(target, camera),
 		Camera:       camera,
 		ViewportPane: viewportPane,
 		Log:          guiLog,
@@ -80,22 +75,22 @@ func (c *SaffronClient) Setup() error {
 }
 
 func (c *SaffronClient) Update() error {
-	gui.BeginDockSpace()
+	saffron.BeginDockSpace()
 	c.RenderTarget.Clear(sfml.Color{R: 0, G: 0, B: 0, A: 255})
 
 	imgui.ShowDemoWindow()
 
-	if input.Input.IsKeyPressed(sfml.KeyNum1) {
-		log.Infoln("info log message")
+	if saffron.Input.IsKeyPressed(sfml.KeyNum1) {
+		saffron.Infoln("info log message")
 	}
-	if input.Input.IsKeyPressed(sfml.KeyNum2) {
-		log.Debugln("debug log message")
+	if saffron.Input.IsKeyPressed(sfml.KeyNum2) {
+		saffron.Debugln("debug log message")
 	}
-	if input.Input.IsKeyPressed(sfml.KeyNum3) {
-		log.Warnln("warning log message")
+	if saffron.Input.IsKeyPressed(sfml.KeyNum3) {
+		saffron.Warnln("warning log message")
 	}
-	if input.Input.IsKeyPressed(sfml.KeyNum4) {
-		log.Errorln("error log message")
+	if saffron.Input.IsKeyPressed(sfml.KeyNum4) {
+		saffron.Errorln("error log message")
 	}
 
 	c.Camera.Update()
@@ -103,7 +98,7 @@ func (c *SaffronClient) Update() error {
 	c.Log.RenderUI()
 	c.ViewportPane.RenderUI()
 	c.App.RenderUI()
-	gui.EndDockSpace()
+	saffron.EndDockSpace()
 
 	c.RenderTarget.Display()
 	return nil

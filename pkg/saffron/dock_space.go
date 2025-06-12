@@ -1,4 +1,4 @@
-package gui
+package saffron
 
 import "github.com/saffronjam/cimgui-go/imgui"
 

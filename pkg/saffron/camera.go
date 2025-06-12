@@ -1,15 +1,13 @@
-package scene
+package saffron
 
 import (
 	"fmt"
 	"github.com/saffronjam/cimgui-go/imgui"
-	"github.com/saffronjam/go-saffron/pkg/core"
-	"github.com/saffronjam/go-saffron/pkg/input"
 	"github.com/saffronjam/go-sfml/public/sfml"
 )
 
 type Camera struct {
-	Reset core.SubscriberList[any]
+	Reset SubscriberList[any]
 
 	Enabled bool
 
@@ -53,13 +51,13 @@ func (c *Camera) Update() {
 		return
 	}
 
-	dt := core.GlobalClock.Delta()
+	dt := GlobalClock.Delta()
 
 	if c.follow != nil {
 		c.SetCenter(c.follow)
 	} else {
-		if input.Input.IsMouseButtonDown(sfml.MouseLeft) && input.Input.IsMouseButtonDown(sfml.MouseRight) {
-			delta := input.Input.MouseSwipe()
+		if Input.IsMouseButtonDown(sfml.MouseLeft) && Input.IsMouseButtonDown(sfml.MouseRight) {
+			delta := Input.MouseSwipe()
 			if delta.LengthSquared() > 0.0 {
 				delta = c.rotationTransform.Inverse().TransformPoint(*delta)
 				delta = c.zoomTransform.Inverse().TransformPoint(*delta)
@@ -69,20 +67,20 @@ func (c *Camera) Update() {
 		}
 	}
 
-	c.ApplyZoom((input.Input.VerticalScroll() / 100.0) + 1.0)
+	c.ApplyZoom((Input.VerticalScroll() / 100.0) + 1.0)
 
 	var angle float32
 
-	if input.Input.IsKeyDown(sfml.KeyQ) {
+	if Input.IsKeyDown(sfml.KeyQ) {
 		angle += c.rps * dt
 	}
 
-	if input.Input.IsKeyDown(sfml.KeyE) {
+	if Input.IsKeyDown(sfml.KeyE) {
 		angle -= c.rps * 360.0 * dt
 	}
 	c.ApplyRotation(angle)
 
-	if input.Input.IsKeyPressed(sfml.KeyR) {
+	if Input.IsKeyPressed(sfml.KeyR) {
 		c.ResetTransformation()
 	}
 }

@@ -1,4 +1,4 @@
-package gui
+package saffron
 
 import (
 	"github.com/saffronjam/cimgui-go/imgui"
@@ -6,20 +6,20 @@ import (
 	"strings"
 )
 
-type Log struct {
+type LogView struct {
 	TextBuffer  strings.Builder
 	LineOffsets []int
 	LineLevels  []zapcore.Level
 }
 
-func NewLog() *Log {
-	log := &Log{}
+func NewLog() *LogView {
+	log := &LogView{}
 	// Always start with first line offset
 	log.LineOffsets = append(log.LineOffsets, 0)
 	return log
 }
 
-func (l *Log) AddEntry(entry zapcore.Entry) {
+func (l *LogView) AddEntry(entry zapcore.Entry) {
 	startOffset := l.TextBuffer.Len()
 	l.TextBuffer.WriteString(entry.Message)
 	l.TextBuffer.WriteByte('\n')
@@ -33,12 +33,12 @@ func (l *Log) AddEntry(entry zapcore.Entry) {
 	}
 }
 
-func (l *Log) Clear() {
+func (l *LogView) Clear() {
 	l.TextBuffer.Reset()
 	l.LineOffsets = l.LineOffsets[:0]
 	l.LineOffsets = append(l.LineOffsets, 0) // Reset to 0
 }
-func (l *Log) RenderUI() {
+func (l *LogView) RenderUI() {
 	imgui.Begin("Log")
 
 	imgui.SetCursorPos(imgui.Vec2{X: 5, Y: 30})

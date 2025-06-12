@@ -1,17 +1,16 @@
-package scene
+package saffron
 
 import "C"
 import (
-	"github.com/saffronjam/go-saffron/pkg/core"
 	"github.com/saffronjam/go-sfml/public/sfml"
 )
 
 type Scene struct {
-	Target    *core.ControllableRenderTexture
+	Target    *ControllableRenderTexture
 	Reference *Camera
 }
 
-func NewScene(target *core.ControllableRenderTexture, reference *Camera) *Scene {
+func NewScene(target *ControllableRenderTexture, reference *Camera) *Scene {
 	return &Scene{
 		Target:    target,
 		Reference: reference,

@@ -1,9 +1,8 @@
-package gui
+package saffron
 
 import (
 	"github.com/saffronjam/cimgui-go/backend/sfml_backend"
 	"github.com/saffronjam/cimgui-go/imgui"
-	"github.com/saffronjam/go-saffron/pkg/core"
 	"unsafe"
 )
 
@@ -11,7 +10,7 @@ var (
 	backend *sfml_backend.SfmlBackend
 )
 
-func Init(window *core.Window, loadDefaultFont bool) error {
+func Init(window *Window, loadDefaultFont bool) error {
 	backend = sfml_backend.NewSfmlBackend()
 
 	if err := backend.Init(unsafe.Pointer(window.SfmlHandle().ToC()), loadDefaultFont); err != nil {
@@ -41,16 +40,16 @@ func Init(window *core.Window, loadDefaultFont bool) error {
 	return nil
 }
 
-func ProcessEvent(window *core.Window, event core.Event) {
+func ProcessEvent(window *Window, event Event) {
 	cEvent := event.SfmlHandle().BaseToC()
 	backend.ProcessEvent(unsafe.Pointer(window.SfmlHandle().ToC()), unsafe.Pointer(&cEvent))
 }
 
-func Update(window *core.Window) {
-	dt := core.GlobalClock.DeltaDuration()
+func Update(window *Window) {
+	dt := GlobalClock.DeltaDuration()
 	backend.NewFrame(unsafe.Pointer(window.SfmlHandle().ToC()), dt)
 }
 
-func Render(window *core.Window) {
+func Render(window *Window) {
 	backend.Render(unsafe.Pointer(window.SfmlHandle().ToC()))
 }

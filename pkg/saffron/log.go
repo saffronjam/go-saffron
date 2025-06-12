@@ -1,13 +1,12 @@
-package log
+package saffron
 
 import (
-	"github.com/saffronjam/go-saffron/pkg/core"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"os"
 )
 
-var OnLog core.SubscriberList[zapcore.Entry]
+var OnLog SubscriberList[zapcore.Entry]
 
 var (
 	Logger    *zap.SugaredLogger

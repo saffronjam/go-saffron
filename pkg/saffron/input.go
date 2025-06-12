@@ -1,7 +1,6 @@
-package input
+package saffron
 
 import (
-	"github.com/saffronjam/go-saffron/pkg/core"
 	"github.com/saffronjam/go-sfml/public/sfml"
 )
 
@@ -23,7 +22,7 @@ func SetGlobalInput(input *Store) {
 	Input = input
 }
 
-func NewInput(eventStore *core.EventStore) *Store {
+func NewInput(eventStore *EventStore) *Store {
 	input := &Store{
 		keyboardState:        make(map[sfml.KeyCode]bool),
 		prevKeyboardState:    make(map[sfml.KeyCode]bool),
@@ -34,24 +33,24 @@ func NewInput(eventStore *core.EventStore) *Store {
 	}
 
 	eventStore.RegisterHandler(func(e any) {
-		event := e.(core.Event)
+		event := e.(Event)
 		eType := event.EventType()
 
 		switch eType {
-		case core.EventKeyPressed:
-			input.onKeyPressed(event.(*core.KeyEvent))
-		case core.EventKeyReleased:
-			input.onKeyReleased(event.(*core.KeyEvent))
-		case core.EventMouseButtonPressed:
-			input.onMouseButtonPressed(event.(*core.MouseButtonEvent))
-		case core.EventMouseButtonReleased:
-			input.onMouseButtonReleased(event.(*core.MouseButtonEvent))
-		case core.EventMouseMoved:
-			input.onMouseMoved(event.(*core.MouseMoveEvent))
-		case core.EventMouseWheelScrolled:
-			input.onMouseWheelScrolled(event.(*core.MouseWheelScrollEvent))
+		case EventKeyPressed:
+			input.onKeyPressed(event.(*KeyEvent))
+		case EventKeyReleased:
+			input.onKeyReleased(event.(*KeyEvent))
+		case EventMouseButtonPressed:
+			input.onMouseButtonPressed(event.(*MouseButtonEvent))
+		case EventMouseButtonReleased:
+			input.onMouseButtonReleased(event.(*MouseButtonEvent))
+		case EventMouseMoved:
+			input.onMouseMoved(event.(*MouseMoveEvent))
+		case EventMouseWheelScrolled:
+			input.onMouseWheelScrolled(event.(*MouseWheelScrollEvent))
 		}
-	}, core.EventKeyPressed, core.EventKeyReleased, core.EventMouseButtonPressed, core.EventMouseButtonReleased, core.EventMouseMoved, core.EventMouseWheelScrolled)
+	}, EventKeyPressed, EventKeyReleased, EventMouseButtonPressed, EventMouseButtonReleased, EventMouseMoved, EventMouseWheelScrolled)
 
 	return input
 }
@@ -113,32 +112,32 @@ func (s *Store) HorizontalScroll() float32 {
 	return s.horizontalScrollDelta
 }
 
-func (s *Store) onKeyPressed(event *core.KeyEvent) {
+func (s *Store) onKeyPressed(event *KeyEvent) {
 	s.prevKeyboardState[event.Code] = s.keyboardState[event.Code]
 	s.keyboardState[event.Code] = true
 }
 
-func (s *Store) onKeyReleased(event *core.KeyEvent) {
+func (s *Store) onKeyReleased(event *KeyEvent) {
 	s.prevKeyboardState[event.Code] = s.keyboardState[event.Code]
 	s.keyboardState[event.Code] = false
 }
 
-func (s *Store) onMouseButtonPressed(event *core.MouseButtonEvent) {
+func (s *Store) onMouseButtonPressed(event *MouseButtonEvent) {
 	s.prevMouseButtonState[event.Button] = s.mouseButtonState[event.Button]
 	s.mouseButtonState[event.Button] = true
 }
 
-func (s *Store) onMouseButtonReleased(event *core.MouseButtonEvent) {
+func (s *Store) onMouseButtonReleased(event *MouseButtonEvent) {
 	s.prevMouseButtonState[event.Button] = s.mouseButtonState[event.Button]
 	s.mouseButtonState[event.Button] = false
 }
 
-func (s *Store) onMouseMoved(event *core.MouseMoveEvent) {
+func (s *Store) onMouseMoved(event *MouseMoveEvent) {
 	s.prevMousePosition = s.mousePosition
 	s.mousePosition = &sfml.Vector2f{X: float32(event.X), Y: float32(event.Y)}
 }
 
-func (s *Store) onMouseWheelScrolled(event *core.MouseWheelScrollEvent) {
+func (s *Store) onMouseWheelScrolled(event *MouseWheelScrollEvent) {
 	if event.Wheel == sfml.MouseVerticalWheel {
 		s.verticalScrollDelta += event.Delta
 	} else if event.Wheel == sfml.MouseHorizontalWheel {

@@ -1,4 +1,4 @@
-package core
+package saffron
 
 import "github.com/google/uuid"
 

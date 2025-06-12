@@ -1,15 +1,13 @@
-package gui
+package saffron
 
 import (
 	"github.com/saffronjam/cimgui-go/imgui"
-	"github.com/saffronjam/go-saffron/pkg/core"
-	"github.com/saffronjam/go-saffron/pkg/input"
 	"github.com/saffronjam/go-sfml/public/sfml"
 )
 
 type ViewportPane struct {
 	WindowTitle     string
-	Target          *core.ControllableRenderTexture
+	Target          *ControllableRenderTexture
 	TopLeft         *sfml.Vector2f
 	BottomRight     *sfml.Vector2f
 	Hovered         bool
@@ -17,13 +15,13 @@ type ViewportPane struct {
 	FallbackTexture *sfml.Texture
 
 	// Subscribers for rendering and resizing events
-	Rendered core.SubscriberList[any]
-	Resized  core.SubscriberList[*sfml.Vector2f]
+	Rendered SubscriberList[any]
+	Resized  SubscriberList[*sfml.Vector2f]
 
 	DockID uint
 }
 
-func NewViewportPane(windowTitle string, target *core.ControllableRenderTexture) *ViewportPane {
+func NewViewportPane(windowTitle string, target *ControllableRenderTexture) *ViewportPane {
 	return &ViewportPane{
 		WindowTitle: windowTitle,
 		Target:      target,
@@ -127,7 +125,7 @@ func (vp *ViewportPane) InViewport(positionNDC *sfml.Vector2f) bool {
 }
 
 func (vp *ViewportPane) MousePosition(normalized bool) *sfml.Vector2f {
-	position := input.Input.MousePosition()
+	position := Input.MousePosition()
 	position.X -= vp.TopLeft.X
 	position.Y -= vp.TopLeft.Y
 

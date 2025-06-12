@@ -1,12 +1,7 @@
-package app
+package saffron
 
 import (
 	"github.com/saffronjam/cimgui-go/imgui"
-	"github.com/saffronjam/go-saffron/pkg/core"
-	"github.com/saffronjam/go-saffron/pkg/gui"
-	"github.com/saffronjam/go-saffron/pkg/input"
-	"github.com/saffronjam/go-saffron/pkg/log"
-	"github.com/saffronjam/go-saffron/pkg/scene"
 )
 
 var MainApp *App
@@ -16,17 +11,17 @@ func SetMainApp(app *App) {
 }
 
 type Config struct {
-	WindowProps *core.WindowProps
+	WindowProps *WindowProps
 }
 
 type App struct {
 	Config      *Config
-	EventStore  *core.EventStore
-	Window      *core.Window
-	Input       *input.Store
-	ClientScene *scene.Scene
-	Clock       *core.Clock
-	MenuBar     *gui.MenuBar
+	EventStore  *EventStore
+	Window      *Window
+	Input       *Store
+	ClientScene *Scene
+	Clock       *Clock
+	MenuBar     *MenuBar
 }
 
 type Client interface {
@@ -35,21 +30,21 @@ type Client interface {
 }
 
 func NewApp(config *Config) (*App, error) {
-	err := log.SetupLogger()
+	err := SetupLogger()
 	if err != nil {
 		return nil, err
 	}
 
-	eventStore := core.NewEventStore()
-	window, err := core.NewWindow(config.WindowProps)
+	eventStore := NewEventStore()
+	window, err := NewWindow(config.WindowProps)
 	if err != nil {
 		return nil, err
 	}
 
-	clock := core.NewClock()
-	core.SetGlobalClock(clock)
+	clock := NewClock()
+	SetGlobalClock(clock)
 
-	menuBar := gui.NewMenuBar()
+	menuBar := NewMenuBar()
 	menuBar.AddMenu("File", func() {
 		if imgui.MenuItemBoolV("Fullscreen", "Alt+Enter", window.Fullscreen, true) {
 			window.SetFullscreen(!window.Fullscreen)
@@ -66,28 +61,28 @@ func NewApp(config *Config) (*App, error) {
 
 	eventStore.RegisterProducer(window)
 
-	err = gui.Init(window, true)
+	err = Init(window, true)
 	if err != nil {
 		return nil, err
 	}
 
 	eventStore.RegisterHandlerByTags(func(e any) {
-		gui.ProcessEvent(window, e.(core.Event))
+		ProcessEvent(window, e.(Event))
 	}, "sfml")
 
-	app.Input = input.NewInput(eventStore)
-	input.SetGlobalInput(app.Input)
+	app.Input = NewInput(eventStore)
+	SetGlobalInput(app.Input)
 
 	return app, nil
 }
 
 func (app *App) Run(client Client) error {
-	app.EventStore.RegisterHandler(func(e any) { app.Window.Close() }, core.EventClosed)
+	app.EventStore.RegisterHandler(func(e any) { app.Window.Close() }, EventClosed)
 
-	gui.SetBessDarkColors()
+	SetBessDarkColors()
 	err := client.Setup()
 	if err != nil {
-		log.Fatalln("Failed to setup client:", err)
+		Fatalln("Failed to setup client:", err)
 	}
 
 	for {
@@ -99,16 +94,16 @@ func (app *App) Run(client Client) error {
 		}
 
 		app.Window.Clear()
-		gui.Update(app.Window)
-		gui.PushFont("roboto", 18)
+		Update(app.Window)
+		PushFont("roboto", 18)
 		err = client.Update()
 		if err != nil {
-			log.Fatalln("Failed to update client:", err)
+			Fatalln("Failed to update client:", err)
 		}
 		app.Input.PostUpdate()
 
-		gui.PopFont()
-		gui.Render(app.Window)
+		PopFont()
+		Render(app.Window)
 		app.Window.Display()
 
 	}
