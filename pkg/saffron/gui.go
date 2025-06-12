@@ -3,12 +3,19 @@ package saffron
 import (
 	"github.com/saffronjam/cimgui-go/backend/sfml_backend"
 	"github.com/saffronjam/cimgui-go/imgui"
+	"path/filepath"
+	"runtime"
 	"unsafe"
 )
 
 var (
 	backend *sfml_backend.SfmlBackend
 )
+
+func getAssetPath(relPath string) string {
+	_, filename, _, _ := runtime.Caller(1) // gets the current file's path
+	return filepath.Join(filepath.Dir(filename), relPath)
+}
 
 func Init(window *Window, loadDefaultFont bool) error {
 	backend = sfml_backend.NewSfmlBackend()
@@ -28,8 +35,8 @@ func Init(window *Window, loadDefaultFont bool) error {
 	}
 
 	for _, size := range fontSizes {
-		LoadFont("roboto", "assets/fonts/Roboto-Regular.ttf", size)
-		LoadFont("roboto-mono", "assets/fonts/Roboto-Mono.ttf", size)
+		LoadFont("roboto", getAssetPath("../../assets/fonts/Roboto-Regular.ttf"), size)
+		LoadFont("roboto-mono", getAssetPath("../../assets/fonts/Roboto-Mono.ttf"), size)
 	}
 
 	err := backend.UpdateFontTexture()
