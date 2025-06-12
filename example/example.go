@@ -2,13 +2,13 @@ package main
 
 import (
 	"github.com/saffronjam/cimgui-go/imgui"
+	"github.com/saffronjam/go-saffron/pkg/app"
+	"github.com/saffronjam/go-saffron/pkg/core"
+	"github.com/saffronjam/go-saffron/pkg/gui"
+	"github.com/saffronjam/go-saffron/pkg/input"
+	"github.com/saffronjam/go-saffron/pkg/log"
+	"github.com/saffronjam/go-saffron/pkg/scene"
 	"github.com/saffronjam/go-sfml/public/sfml"
-	"go-saffron/pkg/app"
-	"go-saffron/pkg/core"
-	"go-saffron/pkg/gui"
-	"go-saffron/pkg/input"
-	"go-saffron/pkg/log"
-	"go-saffron/pkg/scene"
 	"go.uber.org/zap/zapcore"
 	"runtime"
 )

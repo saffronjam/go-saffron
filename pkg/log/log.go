@@ -1,7 +1,7 @@
 package log
 
 import (
-	"go-saffron/pkg/core"
+	"github.com/saffronjam/go-saffron/pkg/core"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"os"

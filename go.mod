@@ -1,4 +1,4 @@
-module go-saffron
+module github.com/saffronjam/go-saffron
 
 go 1.24.0
 

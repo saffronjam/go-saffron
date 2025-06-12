@@ -3,7 +3,7 @@ package gui
 import (
 	"github.com/saffronjam/cimgui-go/backend/sfml_backend"
 	"github.com/saffronjam/cimgui-go/imgui"
-	"go-saffron/pkg/core"
+	"github.com/saffronjam/go-saffron/pkg/core"
 	"unsafe"
 )
 

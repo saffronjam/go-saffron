@@ -2,9 +2,9 @@ package gui
 
 import (
 	"github.com/saffronjam/cimgui-go/imgui"
+	"github.com/saffronjam/go-saffron/pkg/core"
+	"github.com/saffronjam/go-saffron/pkg/input"
 	"github.com/saffronjam/go-sfml/public/sfml"
-	"go-saffron/pkg/core"
-	"go-saffron/pkg/input"
 )
 
 type ViewportPane struct {

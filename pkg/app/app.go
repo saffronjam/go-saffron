@@ -2,11 +2,11 @@ package app
 
 import (
 	"github.com/saffronjam/cimgui-go/imgui"
-	"go-saffron/pkg/core"
-	"go-saffron/pkg/gui"
-	"go-saffron/pkg/input"
-	"go-saffron/pkg/log"
-	"go-saffron/pkg/scene"
+	"github.com/saffronjam/go-saffron/pkg/core"
+	"github.com/saffronjam/go-saffron/pkg/gui"
+	"github.com/saffronjam/go-saffron/pkg/input"
+	"github.com/saffronjam/go-saffron/pkg/log"
+	"github.com/saffronjam/go-saffron/pkg/scene"
 )
 
 var MainApp *App

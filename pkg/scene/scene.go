@@ -2,8 +2,8 @@ package scene
 
 import "C"
 import (
+	"github.com/saffronjam/go-saffron/pkg/core"
 	"github.com/saffronjam/go-sfml/public/sfml"
-	"go-saffron/pkg/core"
 )
 
 type Scene struct {
