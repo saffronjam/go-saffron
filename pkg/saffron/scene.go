@@ -5,15 +5,30 @@ import (
 	"github.com/saffronjam/go-sfml/public/sfml"
 )
 
+const (
+	ScreenSpaceRendering = 1 << iota // 1
+)
+
 type Scene struct {
 	Target    *ControllableRenderTexture
 	Reference *Camera
+	Options   []uint64
 }
 
 func NewScene(target *ControllableRenderTexture, reference *Camera) *Scene {
 	return &Scene{
 		Target:    target,
 		Reference: reference,
+	}
+}
+
+func (s *Scene) PushOptions(options ...uint64) {
+	s.Options = append(s.Options, options...)
+}
+
+func (s *Scene) PopOptions() {
+	if len(s.Options) > 0 {
+		s.Options = s.Options[:len(s.Options)-1]
 	}
 }
 
@@ -95,7 +110,9 @@ func (s *Scene) GenerateRenderStates(in *sfml.RenderStates) *sfml.RenderStates {
 	if s.Reference == nil {
 		return states
 	}
-
-	states.Transform.Combine(s.Reference.TransformMatrix())
+	
+	if len(s.Options) == 0 || s.Options[len(s.Options)-1]&ScreenSpaceRendering == 0 {
+		states.Transform.Combine(s.Reference.TransformMatrix())
+	}
 	return states
 }

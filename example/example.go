@@ -31,10 +31,6 @@ func main() {
 	}
 }
 
-type Algorithm struct {
-	Values []float64
-}
-
 type SaffronClient struct {
 	App          *saffron.App
 	RenderTarget *saffron.ControllableRenderTexture
@@ -42,7 +38,9 @@ type SaffronClient struct {
 	Camera       *saffron.Camera
 	ViewportPane *saffron.ViewportPane
 	Log          *saffron.LogView
-	Algorithm    Algorithm
+
+	WorldSpaceDrawable  *sfml.RectangleShape
+	ScreenSpaceDrawable *sfml.RectangleShape
 }
 
 func NewSaffronClient() *SaffronClient {
@@ -60,6 +58,14 @@ func NewSaffronClient() *SaffronClient {
 		guiLog.AddEntry(msg)
 	})
 
+	rect1 := sfml.NewRectangleShape()
+	rect1.SetSize(sfml.Vector2f{X: 100, Y: 100})
+	rect1.SetFillColor(sfml.Color{R: 255, G: 0, B: 0, A: 255})
+
+	rect2 := sfml.NewRectangleShape()
+	rect2.SetSize(sfml.Vector2f{X: 100, Y: 100})
+	rect2.SetFillColor(sfml.Color{R: 0, G: 255, B: 0, A: 255})
+
 	return &SaffronClient{
 		App:          saffron.MainApp,
 		RenderTarget: target,
@@ -67,6 +73,9 @@ func NewSaffronClient() *SaffronClient {
 		Camera:       camera,
 		ViewportPane: viewportPane,
 		Log:          guiLog,
+
+		WorldSpaceDrawable:  rect1,
+		ScreenSpaceDrawable: rect2,
 	}
 }
 
@@ -94,6 +103,12 @@ func (c *SaffronClient) Update() error {
 	}
 
 	c.Camera.Update()
+
+	c.Scene.SubmitRectangleShape(c.WorldSpaceDrawable, nil)
+	c.Scene.PushOptions(saffron.ScreenSpaceRendering)
+	c.Scene.SubmitRectangleShape(c.WorldSpaceDrawable, nil)
+	c.Scene.PopOptions()
+
 	c.Camera.RenderUI()
 	c.Log.RenderUI()
 	c.ViewportPane.RenderUI()

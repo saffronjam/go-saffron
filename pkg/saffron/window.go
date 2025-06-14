@@ -40,6 +40,9 @@ func NewWindow(props *WindowProps) (*Window, error) {
 		BitsPerPixel: uint32(props.BitsPerPixel),
 	}, props.Title, uint32(windowFlags), &sfml.ContextSettings{
 		AntialiasingLevel: uint32(props.Antialiasing),
+		MajorVersion:      4,
+		MinorVersion:      6,
+		AttributeFlags:    uint32(sfml.ContextDebug),
 	})
 
 	return &Window{

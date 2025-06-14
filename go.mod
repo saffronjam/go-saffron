@@ -13,4 +13,7 @@ require (
 	go.uber.org/zap v1.27.0
 )
 
-require go.uber.org/multierr v1.11.0 // indirect
+require (
+	github.com/go-gl/gl v0.0.0-20231021071112-07e5d0ea2e71 // indirect
+	go.uber.org/multierr v1.11.0 // indirect
+)

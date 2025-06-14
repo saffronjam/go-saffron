@@ -72,7 +72,7 @@ func (c *Camera) Update() {
 	var angle float32
 
 	if Input.IsKeyDown(sfml.KeyQ) {
-		angle += c.rps * dt
+		angle += c.rps * 360.0 * dt
 	}
 
 	if Input.IsKeyDown(sfml.KeyE) {
