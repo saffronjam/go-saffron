@@ -1,15 +1,13 @@
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
-github.com/go-gl/gl v0.0.0-20231021071112-07e5d0ea2e71 h1:5BVwOaUSBTlVZowGO6VZGw2H/zl9nrd3eCZfYV+NfQA=
-github.com/go-gl/gl v0.0.0-20231021071112-07e5d0ea2e71/go.mod h1:9YTyiznxEY1fVinfM7RvRcjRHbw2xLBJ3AAGIT0I4Nw=
 github.com/google/uuid v1.6.0 h1:NIvaJDMOsjHA8n1jAhLSgzrAzy1Hgr+hNrb57e+94F0=
 github.com/google/uuid v1.6.0/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/saffronjam/cimgui-go v1.0.17 h1:/A/NfryE4hlRMeVYg7BXNhfzLAVCslxFlS4dJguRtOg=
 github.com/saffronjam/cimgui-go v1.0.17/go.mod h1:hM8UcXzS8se5i6bCGWXjN9Jrd22EBXaehjwzD/2B/KQ=
-github.com/saffronjam/go-sfml v0.0.16 h1:T+SYgS+NE+RUHZ/lRr1bZn5u5LdxHASkVJvUUxWmEsw=
-github.com/saffronjam/go-sfml v0.0.16/go.mod h1:sNLrw7/W3R/m7kS1siitZpn/0gWKDzRrgnZugXYEd+E=
+github.com/saffronjam/go-sfml v0.0.17 h1:quSod6vmkP0KW3gxDgOI4nsb5FugghORBWNItzhRNK4=
+github.com/saffronjam/go-sfml v0.0.17/go.mod h1:sNLrw7/W3R/m7kS1siitZpn/0gWKDzRrgnZugXYEd+E=
 github.com/stretchr/testify v1.8.1 h1:w7B6lhMri9wdJUVmEZPGGhZzrYTPvgJArz7wNPgYKsk=
 github.com/stretchr/testify v1.8.1/go.mod h1:w2LPCIKwWwSfY2zedu0+kehJoqGctiVI29o6fzry7u4=
 go.uber.org/goleak v1.3.0 h1:2K3zAYmnTNqV73imy9J1T3WC+gmCePx2hEGkimedGto=

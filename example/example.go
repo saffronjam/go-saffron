@@ -41,6 +41,9 @@ type SaffronClient struct {
 
 	WorldSpaceDrawable  *sfml.RectangleShape
 	ScreenSpaceDrawable *sfml.RectangleShape
+
+	GnomeTexture *sfml.Texture
+	GnomeSprite  *sfml.Sprite
 }
 
 func NewSaffronClient() *SaffronClient {
@@ -66,6 +69,15 @@ func NewSaffronClient() *SaffronClient {
 	rect2.SetSize(sfml.Vector2f{X: 100, Y: 100})
 	rect2.SetFillColor(sfml.Color{R: 0, G: 255, B: 0, A: 255})
 
+	gnome := sfml.NewTextureFromFile("assets/textures/gnome.png", &sfml.IntRect{
+		Left:   0,
+		Top:    0,
+		Width:  364,
+		Height: 564,
+	})
+	gnomeSprite := sfml.NewSprite()
+	gnomeSprite.SetTexture(gnome, true)
+
 	return &SaffronClient{
 		App:          saffron.MainApp,
 		RenderTarget: target,
@@ -76,6 +88,9 @@ func NewSaffronClient() *SaffronClient {
 
 		WorldSpaceDrawable:  rect1,
 		ScreenSpaceDrawable: rect2,
+
+		GnomeTexture: gnome,
+		GnomeSprite:  gnomeSprite,
 	}
 }
 
@@ -103,8 +118,13 @@ func (c *SaffronClient) Update() error {
 	}
 
 	c.Camera.Update()
+	c.GnomeSprite.SetPosition(sfml.Vector2f{X: 100, Y: 100})
 
+	// World space rendering
 	c.Scene.SubmitRectangleShape(c.WorldSpaceDrawable, nil)
+	c.Scene.SubmitSprite(c.GnomeSprite, nil)
+
+	// Screen space rendering
 	c.Scene.PushOptions(saffron.ScreenSpaceRendering)
 	c.Scene.SubmitRectangleShape(c.WorldSpaceDrawable, nil)
 	c.Scene.PopOptions()
